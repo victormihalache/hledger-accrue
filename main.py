@@ -1,7 +1,30 @@
 import argparse
+import datetime
+import calendar
 
 def sign(n):
   return -1 if n < 0 else +1
+
+def split_amount(amount: int, tranches: int):
+  periodic_amount = round(amount / tranches)
+  offshoot = periodic_amount * tranches - amount
+
+  periodic_amount += abs(offshoot) // tranches
+
+  offshoot = (abs(offshoot) % tranches)
+
+  gap = ((tranches - offshoot) // offshoot) if offshoot != 0 else 0
+
+  resulting_tranches = []
+  for period in range(tranches):
+    if offshoot != 0 and period % gap == 0:
+      resulting_tranches.append((periodic_amount - 1 * sign(offshoot)) / 100)
+
+      offshoot -= sign(offshoot)
+    else:
+      resulting_tranches.append(periodic_amount / 100)
+
+  return resulting_tranches
 
 def main():
   parser = argparse.ArgumentParser()
@@ -10,45 +33,23 @@ def main():
 
   parser.add_argument("--precision", help="specify decimal precision to use", action="store", default=2, type=int)
 
-  periodic = parser.add_argument_group("by tranches")
-  periodic.add_argument("--tranches", "-t", help="specify the amount of periods to divide the amount by", type=int)
+  parser.add_argument("--from", "-f", help="specify the account from which to take out funds", action="store", type=str, required=True)
+  parser.add_argument("--to", "-t", help="specify the account to which to move funds to", action="store", type=str, required=True)
 
-  dated = parser.add_argument_group("by date range")
-  dated.add_argument("--start", "-s", help="specify the starting date")
-  dated.add_argument("--end", "-e", help="specify the ending date")
-  dated.add_argument("--period", "-p", help="specify the periodicity to use to calculate tranches in date range")
+  parser.add_argument("--start", "-s", help="specify the starting date", type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"), required=True)
+  parser.add_argument("--end", "-e", help="specify the ending date", type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"), required=True)
+  # TODO: Allow user to choose custom date format
 
   args = parser.parse_args()
 
-  print(args)
-
   amount = round(args.amount * 10**args.precision)
-  tranches = args.tranches
 
-  periodic_amount = round(amount / tranches)
-  offshoot = periodic_amount * tranches - amount
-
-  periodic_amount += abs(offshoot) // tranches
-
-  print(offshoot)
-  offshoot = (abs(offshoot) % tranches)
-  print(offshoot)
-
-  gap = ((tranches - offshoot) // offshoot) if offshoot != 0 else 0
-
-  running_sum = 0
-  for period in range(tranches):
-    if offshoot != 0 and period % gap == 0:
-      print("{}".format((periodic_amount - 1 * sign(offshoot)) / 100))
-
-      running_sum += periodic_amount - 1 * sign(offshoot)
-      offshoot -= sign(offshoot)
-    else:
-      print(f"{periodic_amount / 100:.{args.precision}f}")
-      running_sum += periodic_amount
-
-  print (running_sum)
-  print (amount)
+  if args.end > args.start:
+    tranches = (args.end - args.start).days
+  else:
+    parser.error('The end date must be greater than the ending date')
+  
+  print(split_amount(amount, tranches))
 
 if __name__ == "__main__":
   main()
