@@ -1,6 +1,5 @@
 import argparse
 import datetime
-import calendar
 
 
 def sign(n):
@@ -12,12 +11,13 @@ def split_amount(amount: int, tranches: int):
     offshoot = periodic_amount * tranches - amount
 
     periodic_amount += abs(offshoot) // tranches
-
     offshoot = abs(offshoot) % tranches
 
-    gap = ((tranches - offshoot) // offshoot) if offshoot != 0 else 0
+    if offshoot != 0:
+        gap = (tranches - offshoot) // offshoot
 
     resulting_tranches = []
+
     for period in range(tranches):
         if offshoot != 0 and period % gap == 0:
             resulting_tranches.append((periodic_amount - 1 * sign(offshoot)) / 100)
@@ -52,6 +52,7 @@ def main():
         type=str,
         required=True,
     )
+
     parser.add_argument(
         "--to",
         "-t",
@@ -68,6 +69,7 @@ def main():
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
         required=True,
     )
+
     parser.add_argument(
         "--end",
         "-e",
@@ -75,7 +77,17 @@ def main():
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
         required=True,
     )
-    # TODO: Allow user to choose custom date format
+
+    parser.add_argument(
+        "--commodity",
+        "-c",
+        help="specify the commodity to use",
+        type=str,
+        required=True,
+    )
+
+    # TODO: Allow user to choose custom date format for input date
+    # TODO: Allow user to choose custom date format for output date
 
     args = parser.parse_args()
 
@@ -86,7 +98,15 @@ def main():
     else:
         parser.error("The end date must be greater than the ending date")
 
-    print(split_amount(amount, tranches))
+    output_tranches = split_amount(amount, tranches)
+
+    for tnx, tranche in enumerate(output_tranches):
+        print(
+            f"~ {datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}"
+        )
+        print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
+        print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
+        print()
 
 
 if __name__ == "__main__":
