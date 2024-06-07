@@ -50,7 +50,7 @@ def main():
         help="specify the account from which to take out funds",
         action="store",
         type=str,
-        required=True,
+        default="assets:prepaid expenses",
     )
 
     parser.add_argument(
@@ -59,7 +59,7 @@ def main():
         help="specify the account to which to move funds to",
         action="store",
         type=str,
-        required=True,
+        default="expenses",
     )
 
     parser.add_argument(

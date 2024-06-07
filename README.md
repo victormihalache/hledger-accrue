@@ -39,7 +39,6 @@ python3 main.py 400 --from 'assets:prepaid expenses' --to 'expenses:rent' --star
 ## Roadmap
 
 - [ ] Accrue for different periods, not just daily
-- [ ] Use default naming for account
 - [ ] Custom date formats
 - [ ] Generate real transactions, not just periodic
 - [ ] Allow custom description
