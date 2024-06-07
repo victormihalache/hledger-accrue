@@ -8,13 +8,13 @@ Make sure you have a working installation of Python.
 
 ## Installation
 
-- Clone the repo
+Clone the repo
 
 ```sh
 git clone https://github.com/victormihalache/hledger-accrue.git
 ```
 
-- `cd` into the directory
+`cd` into the directory
 
 ```sh
 cd hledger-accrue
