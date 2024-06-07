@@ -66,6 +66,7 @@ def main():
         "--start",
         "-s",
         help="specify the starting date",
+        action="store",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
         required=True,
     )
@@ -74,6 +75,7 @@ def main():
         "--end",
         "-e",
         help="specify the ending date",
+        action="store",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
         required=True,
     )
@@ -82,6 +84,7 @@ def main():
         "--commodity",
         "-c",
         help="specify the commodity to use",
+        action="store",
         type=str,
         required=True,
     )
@@ -90,6 +93,7 @@ def main():
         "--description",
         "-d",
         help="specify the description to use for each transaction",
+        action="store",
         type=str,
         default="",
     )
