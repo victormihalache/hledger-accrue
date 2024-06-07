@@ -98,6 +98,17 @@ def main():
         default="",
     )
 
+    realToggle = parser.add_mutually_exclusive_group()
+    realToggle.add_argument(
+        "--real", "-R", action="store_true", help="use real transactions"
+    )
+    realToggle.add_argument(
+        "--periodic",
+        "-P",
+        action="store_false",
+        help="use periodic transactions",
+    )
+
     # TODO: Allow user to choose custom date format for input date
     # TODO: Allow user to choose custom date format for output date
 
@@ -112,13 +123,22 @@ def main():
 
     output_tranches = split_amount(amount, tranches)
 
-    for tnx, tranche in enumerate(output_tranches):
-        print(
-            f"~ {datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}{'  ' + args.description if args.description != '' else ''}"
-        )
-        print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
-        print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
-        print()
+    if args.real:
+        for tnx, tranche in enumerate(output_tranches):
+            print(
+                f"{datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}{' ' + args.description if args.description != '' else ''}"
+            )
+            print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
+            print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
+            print()
+    else:
+        for tnx, tranche in enumerate(output_tranches):
+            print(
+                f"~ {datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}{'  ' + args.description if args.description != '' else ''}"
+            )
+            print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
+            print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
+            print()
 
 
 if __name__ == "__main__":
