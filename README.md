@@ -1,10 +1,10 @@
-# `hledger-accrue`
+# hledger-accrue
 
 This is a Python 3 script that takes an amount and a bunch of params which it uses to generate multiple transactions that add up to the original amount. This is useful for accruing expenses.
 
 ## Requirements
 
-Make sure you have a working installation of Python.
+Make sure you have a working installation of Python 3.
 
 ## Installation
 
