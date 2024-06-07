@@ -33,6 +33,7 @@ cd hledger-accrue
 usage: main.py [-h] [--precision PRECISION] [--from FROM] [--to TO] --start
                START --end END --commodity COMMODITY
                [--description DESCRIPTION] [--real | --periodic]
+               [--unmarked | --pending | --cleared]
                amount
 
 positional arguments:
@@ -52,7 +53,10 @@ options:
   --description DESCRIPTION, -d DESCRIPTION
                         specify the description to use for each transaction
   --real, -R            use real transactions
-  --periodic, -P        use periodic transactions
+  --periodic, -p        use periodic transactions
+  --unmarked, -U        mark every transaction as "unmarked"
+  --pending, -P         mark every transaction as "pending"
+  --cleared, -C         mark every transaction as "cleared"
 ```
 
 ### Examples
@@ -67,5 +71,5 @@ python3 main.py 400 --start 2024-01-01 --end 2024-02-01 --commodity EUR --descri
 
 - [ ] Accrue for different periods, not just daily
 - [ ] Custom date formats
-- [ ] Allow setting for transaction status (unmarked, pending, cleared)
 - [ ] Use smart dates similar to hledger's
+- [ ] Use python's parser groups more nicely

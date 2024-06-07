@@ -104,9 +104,29 @@ def main():
     )
     realToggle.add_argument(
         "--periodic",
-        "-P",
+        "-p",
         action="store_false",
         help="use periodic transactions",
+    )
+
+    statusToggle = parser.add_mutually_exclusive_group()
+    statusToggle.add_argument(
+        "--unmarked",
+        "-U",
+        action="store_true",
+        help='mark every transaction as "unmarked"',
+    )
+    statusToggle.add_argument(
+        "--pending",
+        "-P",
+        action="store_true",
+        help='mark every transaction as "pending"',
+    )
+    statusToggle.add_argument(
+        "--cleared",
+        "-C",
+        action="store_true",
+        help='mark every transaction as "cleared"',
     )
 
     # TODO: Allow user to choose custom date format for input date
@@ -123,19 +143,48 @@ def main():
 
     output_tranches = split_amount(amount, tranches)
 
+    if args.unmarked or args.pending or args.cleared:
+        if not args.description:
+            parser.error(
+                "Transaction status can only be set when the description is also set"
+            )
+        elif not args.real:
+            parser.error("Transaction status can only be set for real transactions")
+
+    if args.description:
+        description = " " + args.description
+
+        if args.unmarked:
+            status = ""
+        elif args.pending:
+            status = " !"
+        elif args.cleared:
+            status = " *"
+        else:
+            status = ""
+    else:
+        description = ""
+
+    fromAccount = getattr(args, "from")
+    toAccount = getattr(args, "to")
+
     if args.real:
         for tnx, tranche in enumerate(output_tranches):
-            print(
-                f"{datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}{' ' + args.description if args.description != '' else ''}"
+            date = datetime.datetime.strftime(
+                args.start + datetime.timedelta(tnx), "%Y-%m-%d"
             )
-            print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
-            print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
+
+            print(f"{date}{status}{description}")
+            print(f"  {fromAccount}  -{tranche} {args.commodity}")
+            print(f"  {toAccount}  {tranche} {args.commodity}")
             print()
     else:
         for tnx, tranche in enumerate(output_tranches):
-            print(
-                f"~ {datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}{'  ' + args.description if args.description != '' else ''}"
+            date = datetime.datetime.strftime(
+                args.start + datetime.timedelta(tnx), "%Y-%m-%d"
             )
+
+            print(f"~ {date}{description}")
             print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
             print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
             print()
