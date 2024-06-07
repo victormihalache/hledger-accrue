@@ -41,4 +41,3 @@ python3 main.py 400 --from 'assets:prepaid expenses' --to 'expenses:rent' --star
 - [ ] Accrue for different periods, not just daily
 - [ ] Custom date formats
 - [ ] Generate real transactions, not just periodic
-- [ ] Allow custom description

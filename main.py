@@ -86,6 +86,14 @@ def main():
         required=True,
     )
 
+    parser.add_argument(
+        "--description",
+        "-d",
+        help="specify the description to use for each transaction",
+        type=str,
+        default="",
+    )
+
     # TODO: Allow user to choose custom date format for input date
     # TODO: Allow user to choose custom date format for output date
 
@@ -102,7 +110,7 @@ def main():
 
     for tnx, tranche in enumerate(output_tranches):
         print(
-            f"~ {datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}"
+            f"~ {datetime.datetime.strftime(args.start + datetime.timedelta(tnx), '%Y-%m-%d')}{'  ' + args.description if args.description != '' else ''}"
         )
         print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
         print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
