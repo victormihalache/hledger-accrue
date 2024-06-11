@@ -30,7 +30,11 @@ def split_amount(amount: int, tranches: int):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    class CustomHelpFormatter(argparse.HelpFormatter):
+        def __init__(self, prog, indent_increment=2, max_help_position=80, width=160):
+            super().__init__(prog, indent_increment, max_help_position, width)
+
+    parser = argparse.ArgumentParser(formatter_class=CustomHelpFormatter)
 
     parser.add_argument(
         "amount", help="amount that has to be divided across periods", type=float
