@@ -31,7 +31,7 @@ def split_amount(amount: int, tranches: int):
 
 def main():
     class CustomHelpFormatter(argparse.HelpFormatter):
-        def __init__(self, prog, indent_increment=2, max_help_position=80, width=160):
+        def __init__(self, prog, indent_increment=2, max_help_position=80, width=120):
             super().__init__(prog, indent_increment, max_help_position, width)
 
     parser = argparse.ArgumentParser(formatter_class=CustomHelpFormatter)
@@ -48,7 +48,9 @@ def main():
         type=int,
     )
 
-    parser.add_argument(
+    transactionSettingsGroup = parser.add_argument_group("transaction settings")
+
+    transactionSettingsGroup.add_argument(
         "--from",
         "-f",
         help="specify the account from which to take out funds",
@@ -57,13 +59,31 @@ def main():
         default="assets:prepaid expenses",
     )
 
-    parser.add_argument(
+    transactionSettingsGroup.add_argument(
         "--to",
         "-t",
         help="specify the account to which to move funds to",
         action="store",
         type=str,
         default="expenses",
+    )
+
+    transactionSettingsGroup.add_argument(
+        "--commodity",
+        "-c",
+        help="specify the commodity to use",
+        action="store",
+        type=str,
+        default="$",
+    )
+
+    transactionSettingsGroup.add_argument(
+        "--description",
+        "-d",
+        help="specify the description to use for each transaction",
+        action="store",
+        type=str,
+        default="",
     )
 
     dateRange = parser.add_argument_group("date range manipulation")
@@ -100,25 +120,8 @@ def main():
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
     )
 
-    parser.add_argument(
-        "--commodity",
-        "-c",
-        help="specify the commodity to use",
-        action="store",
-        type=str,
-        required=True,
-    )
-
-    parser.add_argument(
-        "--description",
-        "-d",
-        help="specify the description to use for each transaction",
-        action="store",
-        type=str,
-        default="",
-    )
-
-    realToggle = parser.add_mutually_exclusive_group()
+    transactionTypeGroup = parser.add_argument_group("transaction type")
+    realToggle = transactionTypeGroup.add_mutually_exclusive_group()
     realToggle.add_argument(
         "--real", "-R", action="store_true", help="use real transactions"
     )
@@ -129,7 +132,8 @@ def main():
         help="use periodic transactions",
     )
 
-    statusToggle = parser.add_mutually_exclusive_group()
+    statusGroup = parser.add_argument_group("transaction status")
+    statusToggle = statusGroup.add_mutually_exclusive_group()
     statusToggle.add_argument(
         "--unmarked",
         "-U",
