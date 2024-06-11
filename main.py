@@ -11,15 +11,15 @@ def split_amount(amount: int, tranches: int):
     offshoot = periodic_amount * tranches - amount
 
     periodic_amount += abs(offshoot) // tranches
-    offshoot = abs(offshoot) % tranches
+    offshoot = offshoot % (tranches * sign(offshoot))
 
     if offshoot != 0:
-        gap = (tranches - offshoot) // offshoot
+        gap = (tranches - abs(offshoot)) // offshoot
 
     resulting_tranches = []
 
     for period in range(tranches):
-        if offshoot != 0 and period % gap == 0:
+        if offshoot != 0 and period % (gap + sign(offshoot)) == 0:
             resulting_tranches.append((periodic_amount - 1 * sign(offshoot)) / 100)
 
             offshoot -= sign(offshoot)
