@@ -66,22 +66,38 @@ def main():
         default="expenses",
     )
 
-    parser.add_argument(
-        "--start",
+    dateRange = parser.add_argument_group("date range manipulation")
+
+    dateRange.add_argument(
+        "--accrual-start",
         "-s",
-        help="specify the starting date",
+        help="specify the date from which to start accruing the amount",
         action="store",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
         required=True,
     )
 
-    parser.add_argument(
-        "--end",
+    dateRange.add_argument(
+        "--accrual-end",
         "-e",
-        help="specify the ending date",
+        help="specify the date at which to stop accruing the amount",
         action="store",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
         required=True,
+    )
+
+    dateRange.add_argument(
+        "--reporting-start",
+        help="specify the date from which to start reporting transactions",
+        action="store",
+        type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
+    )
+
+    dateRange.add_argument(
+        "--reporting-end",
+        help="specify the date at which to stop reporting transactions",
+        action="store",
+        type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
     )
 
     parser.add_argument(
@@ -138,12 +154,28 @@ def main():
 
     args = parser.parse_args()
 
-    amount = round(args.amount * 10**args.precision)
-
-    if args.end > args.start:
-        tranches = (args.end - args.start).days
+    if args.accrual_end > args.accrual_start:
+        tranches = (args.accrual_end - args.accrual_start).days
     else:
         parser.error("The end date must be greater than the ending date")
+
+    if args.reporting_start:
+        if args.reporting_start < args.accrual_start:
+            parser.error(
+                "The reporting start date must not come before the accruing start date"
+            )
+    else:
+        args.reporting_start = args.accrual_start
+
+    if args.reporting_end:
+        if args.reporting_end > args.accrual_end:
+            parser.error(
+                "The reporting end date must not come after the accruing end date"
+            )
+    else:
+        args.reporting_end = args.accrual_end
+
+    amount = round(args.amount * 10**args.precision)
 
     output_tranches = split_amount(amount, tranches)
 
@@ -175,8 +207,15 @@ def main():
     if args.real:
         for tnx, tranche in enumerate(output_tranches):
             date = datetime.datetime.strftime(
-                args.start + datetime.timedelta(tnx), "%Y-%m-%d"
+                args.accrual_start + datetime.timedelta(tnx), "%Y-%m-%d"
             )
+
+            if not (
+                args.reporting_start
+                <= datetime.datetime.strptime(date, "%Y-%m-%d")
+                <= args.reporting_end
+            ):
+                continue
 
             print(f"{date}{status}{description}")
             print(f"  {fromAccount}  -{tranche} {args.commodity}")
@@ -185,8 +224,15 @@ def main():
     else:
         for tnx, tranche in enumerate(output_tranches):
             date = datetime.datetime.strftime(
-                args.start + datetime.timedelta(tnx), "%Y-%m-%d"
+                args.accrual_start + datetime.timedelta(tnx), "%Y-%m-%d"
             )
+
+            if not (
+                args.reporting_start
+                <= datetime.datetime.strptime(date, "%Y-%m-%d")
+                <= args.reporting_end
+            ):
+                continue
 
             print(f"~ {date}{description}")
             print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
