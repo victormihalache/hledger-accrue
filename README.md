@@ -30,9 +30,10 @@ cd hledger-accrue
 ## Usage
 
 ```txt
-usage: main.py [-h] [--precision PRECISION] [--from FROM] [--to TO] [--commodity COMMODITY] [--description DESCRIPTION]
-               --accrual-start ACCRUAL_START --accrual-end ACCRUAL_END [--reporting-start REPORTING_START]
-               [--reporting-end REPORTING_END] [--real | --periodic] [--unmarked | --pending | --cleared]
+usage: main.py [-h] [--precision PRECISION] [--date-format DATE_FORMAT] [--from FROM] [--to TO] [--commodity COMMODITY]
+               [--description DESCRIPTION] --accrual-start ACCRUAL_START --accrual-end ACCRUAL_END
+               [--reporting-start REPORTING_START] [--reporting-end REPORTING_END] [--real | --periodic]
+               [--unmarked | --pending | --cleared]
                amount
 
 positional arguments:
@@ -41,6 +42,7 @@ positional arguments:
 options:
   -h, --help                                       show this help message and exit
   --precision PRECISION                            specify decimal precision to use
+  --date-format DATE_FORMAT                        specify date format to use for dates passed as arguments
 
 transaction settings:
   --from FROM, -f FROM                             specify the account from which to take out funds
