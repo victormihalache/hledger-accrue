@@ -62,7 +62,7 @@ date range manipulation:
 Take rent for January and accrue it for every day of the month:
 
 ```sh
-python3 main.py 400 --start 2024-01-01 --end 2024-02-01 --commodity EUR --description "Pay rent" -R --to "expenses:rent"
+python3 main.py 400 --accrual-start 2024-01-01 --accrual-end 2024-02-01 --commodity EUR --description "Pay rent" -R --to "expenses:rent"
 ```
 
 ## Roadmap
