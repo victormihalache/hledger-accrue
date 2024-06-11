@@ -48,6 +48,14 @@ def main():
         type=int,
     )
 
+    parser.add_argument(
+        "--date-format",
+        help="specify date format to use for dates passed as arguments",
+        action="store",
+        default="%Y-%m-%d",
+        type=str,
+    )
+
     transactionSettingsGroup = parser.add_argument_group("transaction settings")
 
     transactionSettingsGroup.add_argument(
@@ -93,7 +101,7 @@ def main():
         "-s",
         help="specify the date from which to start accruing the amount",
         action="store",
-        type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
+        type=str,
         required=True,
     )
 
@@ -102,7 +110,7 @@ def main():
         "-e",
         help="specify the date at which to stop accruing the amount",
         action="store",
-        type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
+        type=str,
         required=True,
     )
 
@@ -110,14 +118,14 @@ def main():
         "--reporting-start",
         help="specify the date from which to start reporting transactions",
         action="store",
-        type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
+        type=str,
     )
 
     dateRange.add_argument(
         "--reporting-end",
         help="specify the date at which to stop reporting transactions",
         action="store",
-        type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
+        type=str,
     )
 
     transactionTypeGroup = parser.add_argument_group("transaction type")
@@ -157,6 +165,23 @@ def main():
     # TODO: Allow user to choose custom date format for output date
 
     args = parser.parse_args()
+
+    if args.accrual_start:
+        args.accrual_start = datetime.datetime.strptime(
+            args.accrual_start, args.date_format
+        )
+    if args.accrual_end:
+        args.accrual_end = datetime.datetime.strptime(
+            args.accrual_end, args.date_format
+        )
+    if args.reporting_start:
+        args.reporting_start = datetime.datetime.strptime(
+            args.reporting_start, args.date_format
+        )
+    if args.reporting_end:
+        args.reporting_end = datetime.datetime.strptime(
+            args.reporting_end, args.date_format
+        )
 
     if args.accrual_end > args.accrual_start:
         tranches = (args.accrual_end - args.accrual_start).days

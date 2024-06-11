@@ -75,6 +75,4 @@ python3 main.py 400 -s 2024-01-01 -e 2024-02-01 -d "Pay rent" --to "expenses:ren
 ## Roadmap
 
 - [ ] Accrue for different periods, not just daily
-- [ ] Custom date formats
 - [ ] Use smart dates similar to hledger's
-- [ ] Use python's parser groups more nicely
