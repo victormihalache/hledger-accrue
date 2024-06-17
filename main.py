@@ -263,7 +263,7 @@ def main():
             ):
                 continue
 
-            print(f"~ {date}{description}")
+            print(f"~ {date} {description}")
             print(f"  {getattr(args, 'from')}  -{tranche} {args.commodity}")
             print(f"  {getattr(args, 'to')}  {tranche} {args.commodity}")
             print()
